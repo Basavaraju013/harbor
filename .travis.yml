@@ -1,23 +1,27 @@
 sudo: true
 language: go
 go:
-- 1.11.2
+- 1.11.5
 go_import_path: github.com/goharbor/harbor
 services:
 - docker
 dist: trusty
 matrix:
   include:
-  - go: 1.11.2
+  - os: linux-ppc64le
+    go: 1.11.5
     env:
     - UTTEST=true
-  - go: 1.11.2
+  - os: linux-ppc64le
+    go: 1.11.5
     env:
     - APITEST_DB=true
-  - go: 1.11.2
+  - os: linux-ppc64le
+    go: 1.11.5
     env:
     - APITEST_LDAP=true
-  - go: 1.11.2
+  - os: linux-ppc64le
+    go: 1.11.5
     env:
     - OFFLINE=true
 env:
@@ -49,9 +53,12 @@ before_install:
   -s`-`uname -m` > docker-compose
 - chmod +x docker-compose
 - sudo mv docker-compose /usr/local/bin
+- sudo apt-get install -y npm
+- sudo npm config set optional false 
 - IP=`ip addr s eth0 |grep "inet "|awk '{print $2}' |awk -F "/" '{print $1}'`
 - sudo sed -i '$a DOCKER_OPTS=\"--insecure-registry '$IP':5000\"' /etc/default/docker
 - export IP=$IP
+- pip install docker-compose
 - sudo service docker restart
 install:
 - if [ "$UTTEST" == true ]; then bash ./tests/travis/ut_install.sh ; fi
